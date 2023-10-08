@@ -1,0 +1,119 @@
+import React, { Component } from 'react';
+
+class SecantMethod extends Component {
+  constructor() {
+    super();
+    this.state = {
+      x0: 1, // Initial guess x0
+      x1: 2, // Initial guess x1
+      ans:0,
+      root:1,
+      tolerance: 0.00001, // Tolerance for stopping criterion
+      maxIterations: 100, // Maximum number of iterations
+      result: null, // The approximate root
+    };
+  }
+
+  calculateRoot = () => {
+    let { x0, x1, ans,root,tolerance, maxIterations } = this.state;
+    let x2, f0, f1, f2;
+
+    for (let i = 0; i < maxIterations; i++) {
+      f0 = this.functionToSolve(x0);
+      f1 = this.functionToSolve(x1);
+
+      if (Math.abs(f0) < tolerance) {
+        this.setState({ result: x0 });
+        return;
+      }
+
+      if (Math.abs(f1) < tolerance) {
+        this.setState({ result: x1 });
+        return;
+      }
+
+      x2 = x1 - (f1 * (x1 - x0)) / (f1 - f0);
+      f2 = this.functionToSolve(x2);
+
+      if (Math.abs(f2) < tolerance) {
+        this.setState({ result: x2 });
+        return;
+      }
+
+      x0 = x1;
+      x1 = x2;
+    }
+
+    // If maxIterations is reached without converging, display an error
+    this.setState({ result: 'No convergence after max iterations' });
+  };
+
+  functionToSolve = (x) => {
+    // Replace this with the actual function you want to solve
+    // For example, if you want to find the root of f(x) = x^2 - 4:
+    return  x - Math.pow(this.state.ans,1/this.state.root) };
+
+  render() {
+    const { x0, x1, ans,root,tolerance, maxIterations, result } = this.state;
+    return (
+      <div>
+        <h1>Secant Method</h1>
+        <div>
+          <label>Initial Guess (x0):</label>
+          <input
+            type="number"
+            value={x0}
+            onChange={(e) => this.setState({ x0: parseFloat(e.target.value) })}
+          />
+        </div>
+        <div>
+          <label>Initial Guess (x1):</label>
+          <input
+            type="number"
+            value={x1}
+            onChange={(e) => this.setState({ x1: parseFloat(e.target.value) })}
+          />
+        </div>
+        <div>
+          <label>ans:</label>
+          <input
+            type="number"
+            value={ans}
+            onChange={(e) => this.setState({ ans: parseFloat(e.target.value) })}
+          />
+        </div>
+         <div>
+          <label>root:</label>
+          <input
+            type="number"
+            value={root}
+            min="1"
+            onChange={(e) => this.setState({ root: parseFloat(e.target.value) })}
+          />
+        </div>
+        <div>
+          <label>Tolerance:</label>
+          <input
+            type="number"
+            value={tolerance}
+            onChange={(e) => this.setState({ tolerance: parseFloat(e.target.value) })}
+          />
+        </div>
+        <div>
+          <label>Max Iterations:</label>
+          <input
+            type="number"
+            value={maxIterations}
+            onChange={(e) => this.setState({ maxIterations: parseInt(e.target.value) })}
+          />
+        </div>
+        <button onClick={this.calculateRoot}>Calculate Root</button>
+        <div>
+          <strong>Approximate Root:</strong> {result}
+        </div>
+      </div>
+    );
+  }
+}
+
+export default SecantMethod;
