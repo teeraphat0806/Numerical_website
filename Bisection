@@ -4,28 +4,26 @@ function Bisection() {
   const [a, setA] = useState(0);
   const [b, setB] = useState(1);
   const [ans, setans] = useState(1);
-  const [root, setroot] = useState(1);
   const [tolerance, setTolerance] = useState(0.0001);
   const [result, setResult] = useState(null);
 
-  const f = (x) => Math.pow(ans,1/root)-x; // Define the function here
+  const f = (x) => eval(ans); // Define the function here
 
   const calculateRoot = () => {
     let a = parseFloat(document.getElementById("a").value);
     let b = parseFloat(document.getElementById("b").value);
-    let ans = parseFloat(document.getElementById("ans").value);
-    let root = parseFloat(document.getElementById("root").value);
+    let ans =(document.getElementById("ans").value);
     let tolerance = parseFloat(document.getElementById("tolerance").value);
 
     let fa = f(a);
     let fb = f(b);
 
-   
+
 
     let c;
     let fc;
     let iteration = 0;
-    
+
     while ((b - a) >= tolerance) {
       c = (a + b) / 2;
       fc = f(c);
@@ -49,7 +47,7 @@ function Bisection() {
   return (
     <div>
       <div>
-      
+
         <label htmlFor="a">a:</label>
         <input type="number" id="a" value={a} onChange={(e) => setA(parseFloat(e.target.value))} />
       </div>
@@ -59,12 +57,9 @@ function Bisection() {
       </div>
       <div>
         <label htmlFor="ans">ans:</label>
-        <input type="number" id="ans" value={ans} onChange={(e) => setans(parseFloat(e.target.value))} />
+        <input type="text" id="ans" value={ans} onChange={(e) => setans(e.target.value)} />
       </div>
-      <div>
-        <label htmlFor="root">root:</label>
-        <input type="number" id="root" value={root} onChange={(e) => setroot(parseFloat(e.target.value))} />
-      </div>
+      
       <div>
         <label htmlFor="tolerance">Tolerance:</label>
         <input type="number" id="tolerance" value={tolerance} onChange={(e) => setTolerance(parseFloat(e.target.value))} />
