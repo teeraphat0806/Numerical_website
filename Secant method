@@ -6,8 +6,8 @@ class SecantMethod extends Component {
     this.state = {
       x0: 1, // Initial guess x0
       x1: 2, // Initial guess x1
-      ans:0,
-      root:1,
+      ans: " ",
+
       tolerance: 0.00001, // Tolerance for stopping criterion
       maxIterations: 100, // Maximum number of iterations
       result: null, // The approximate root
@@ -15,7 +15,7 @@ class SecantMethod extends Component {
   }
 
   calculateRoot = () => {
-    let { x0, x1, ans,root,tolerance, maxIterations } = this.state;
+    let { x0, x1, ans, tolerance, maxIterations } = this.state;
     let x2, f0, f1, f2;
 
     for (let i = 0; i < maxIterations; i++) {
@@ -51,10 +51,11 @@ class SecantMethod extends Component {
   functionToSolve = (x) => {
     // Replace this with the actual function you want to solve
     // For example, if you want to find the root of f(x) = x^2 - 4:
-    return  x - Math.pow(this.state.ans,1/this.state.root) };
+    return eval(this.state.ans)
+  };
 
   render() {
-    const { x0, x1, ans,root,tolerance, maxIterations, result } = this.state;
+    const { x0, x1, ans, tolerance, maxIterations, result } = this.state;
     return (
       <div>
         <h1>Secant Method</h1>
@@ -75,22 +76,14 @@ class SecantMethod extends Component {
           />
         </div>
         <div>
-          <label>ans:</label>
+          <label>Function :</label>
           <input
-            type="number"
+            type="text"
             value={ans}
-            onChange={(e) => this.setState({ ans: parseFloat(e.target.value) })}
+            onChange={(e) => this.setState({ ans: e.target.value })}
           />
         </div>
-         <div>
-          <label>root:</label>
-          <input
-            type="number"
-            value={root}
-            min="1"
-            onChange={(e) => this.setState({ root: parseFloat(e.target.value) })}
-          />
-        </div>
+
         <div>
           <label>Tolerance:</label>
           <input
