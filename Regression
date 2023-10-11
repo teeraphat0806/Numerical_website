@@ -1,0 +1,246 @@
+import React, { useState } from 'react';
+import Select from 'react-select';
+
+
+function regression(){
+  const [numberdata,setnumberdata] = useState(1);
+  const [matrix, setMatrix] = useState([]);
+  const [matrix_y, setMatrix_y] = useState([]);
+  const [selectedOption,setSelectedOption] = useState(" ");
+  const [answer,setAnswer] = useState([]);
+  const [findx,setfindx] = useState(0);
+  const [m,setm] = useState(0);
+  const handleOptionChange = (e) => {
+    setSelectedOption(e.target.value);
+  };
+  const handleInputChanges_matrix = (e, index) => {
+    const newValue = parseFloat(e.target.value);
+    if (!isNaN(newValue)) {
+      const newRow = [...matrix];
+      newRow[index] = newValue;
+      setMatrix(newRow);
+    }
+  };
+  const handleInputChanges_matrix_y = (e, index) => {
+    const newValue = parseFloat(e.target.value);
+    if (!isNaN(newValue)) {
+      const newRow = [...matrix_y];
+      newRow[index] = newValue;
+      setMatrix_y(newRow);
+    }
+  };
+  function mlabelComponent(){
+  if(selectedOption == "Polynomial regression"){return "m"}else{return ""};
+  }
+  
+  function InputComponent() {
+    if(selectedOption == "Polynomial regression"){
+    return (
+       <input type="number" id="m" value={m} onChange={(e) => setm(parseFloat(e.target.value))} />
+    )
+    }
+  }
+  function Inputconfirm(){
+    if(selectedOption != " " && matrix.length != 0){return <button onClick={select}>confirm</button>};
+  }
+  function Matrixinputlabel(){
+    if(selectedOption != " " && matrix.length != 0){
+      return <h2>Matrix Input</h2>;
+    }
+  }
+  function setMatrixs(){
+    const arr = Array();
+    for(let i=0;i<numberdata;i++){
+      arr.push(0);
+    }
+  
+    setMatrix(arr);
+    setMatrix_y(arr); 
+  }
+  function select(){
+    if(selectedOption == "Linear regression"){
+      linear_regression();
+    }else if(selectedOption == "Polynomial regression"){
+      polynomial_regression();
+    }
+  }
+  function linear_regression(){
+    let ans = [];
+    let x = [];
+    let y = [];
+    let det;
+    for(let i=0;i<2;i++){
+      let array =[];
+      for(let k=0;k<2;k++){
+        
+        if(i == 0 && k==0){
+          array.push(numberdata);
+        }else{
+          array.push(addx(matrix,i+k));
+        }
+      }x.push(array);
+    }
+    y.push(addx(matrix_y,1));
+    y.push(addxy(matrix,matrix_y,1));
+    det = determinant(x);
+    ans.push(((y[0]*x[1][1])-(y[1]*x[0][1]))/det)
+    ans.push(((y[1]*x[0][0])-(y[0]*x[1][0]))/det)
+    setAnswer(ans[0]+(ans[1]*findx));
+  }
+  function polynomial_regression(){
+    let x = Array();
+    let y = Array();
+    let answer_y =0;
+    let M = m+1;
+    let det = 0;
+    let ans = Array();
+    for(let i=0;i<M;i++){
+      let array = [];
+      for(let k=i;k<M+i;k++){
+        if(i==0&&k==0){
+          array.push(m);
+        }else{
+          array.push(addx(matrix,k));
+        }
+      }x.push(array);
+    }
+    for(let i=0;i<matrix_y.length;i++){
+      if(i==0){
+        y.push(addx(matrix_y,1));
+      }else{
+        y.push(addxy(matrix,matrix_y,i));
+      }
+    }
+    det = determinant(x); 
+    for(let i=0;i<M;i++){
+      if(i==0){
+        answer_y += (determinant(setmatrix(x,y,i))/det)
+      }else{
+        answer_y += (determinant(setmatrix(x,y,i))/det)*(findx**i);
+      }
+    }
+    setAnswer(answer_y);
+  }
+  function setmatrix(x,y,index){
+    let ans = Array();
+    for(let i=0;i<x.length;i++){
+      let array = [];
+      for(let k=0;k<x.length;k++){
+        if(k==index){
+          array.push(y[i]);
+        }else{
+          array.push(x[i][k]);
+        }
+      }ans.push(array);
+    }
+    return ans;
+  }
+
+  function addx(x,power){
+    let ans = 0
+    for(let i=0;i<x.length;i++){
+      ans += x[i]**power;
+    }
+    return ans;
+  }
+  function addxy(x,y,power){
+    let ans = 0;
+    for(let i=0;i<x.length;i++){
+      ans += ((x[i]**power)*y[i]);
+    }
+    return ans;
+  }
+
+  function determinant(matrix_ans){
+    
+    let final_ans = 0;
+    let ansed = 1;
+    let size = matrix_ans.length;
+    if(size == 2){
+      final_ans += ((matrix_ans[0][0]*matrix_ans[1][1])-(matrix_ans[1][0]*matrix_ans[0][1]));
+    }else{
+      for(let i=0;i< size;i++){
+          for(let k=i;k< size+i;k++){
+            ansed *= matrix_ans[k-i][k%size];
+          }
+        final_ans +=ansed;
+        ansed = 1;
+      }
+      for(let i=0;i< size;i++){
+          for(let k=i;k< size+i;k++){
+            ansed *= matrix_ans[((size-1)-(k-i))%size][k%size];
+          }
+        final_ans -=ansed;
+        ansed = 1;
+      }
+    }
+    return final_ans;
+  } 
+  
+  return (
+    <>
+    <div>
+       <label htmlFor="a">number of data:</label>
+       <input type="number" id="numberdata" value={numberdata} onChange={(e) => setnumberdata(parseFloat(e.target.value))} />
+      <button  onClick={setMatrixs}>ok</button>
+    </div>
+      <label htmlFor="a">find x:</label>
+      <input type="number" id="findx" value={findx} onChange={(e) => setfindx(parseFloat(e.target.value))} />
+    <div>
+    </div>
+      <label htmlFor="a">{mlabelComponent()}</label>
+      <InputComponent/>
+    <div>
+      <select id="optionSelect" value={selectedOption} onChange={handleOptionChange}>
+        <option value="Linear regression">Linear regression</option>
+        <option value="Polynomial regression">Polynomial regression</option>
+      </select>
+    </div>
+    <div>
+      <Matrixinputlabel />
+      <table>
+        <tbody>
+            <tr>
+              {matrix.map((column, colIndex) => (
+                <td key={colIndex}>
+                  <input
+                    type="number"
+                  step="0.01" 
+                    value={column}
+                    onChange={(e) => handleInputChanges_matrix(e, colIndex)}
+                  />
+                </td>
+              ))}
+            </tr>
+        </tbody>
+      </table>
+    </div>  
+    <div>
+      <table>
+        <tbody>
+            <tr>
+              {matrix_y.map((column, colIndex) => (
+                <td key={colIndex}>
+                  <input
+                    type="number"
+                    step="0.01" 
+                    value={column}
+                    onChange={(e) => handleInputChanges_matrix_y(e, colIndex)}
+                  />
+                </td>
+              ))}
+            </tr>
+        </tbody>
+      </table>
+    </div>  
+    <div>
+      <Inputconfirm />
+    </div>
+    <div>
+     
+      <p>{answer}</p>
+    </div>
+    </>
+  )
+}
+export default regression;
