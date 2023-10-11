@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
-
+import { derivative } from 'mathjs'
 function NewtonRaphson() {
   const [initialGuess, setInitialGuess] = useState(0);
-  const [ans, setans] = useState(0);
-  const [root, setroot] = useState(1);
+  const [ans, setans] = useState('');
   const [tolerance, setTolerance] = useState(0.0001);
   const [result, setResult] = useState(null);
-  
-  const f = (x) => x - Math.pow(ans,1/root); // Define the function here
-  const fPrime = (x) => 1; // Define the derivative of the function here
 
+  const f = (x) => eval(ans); // Define the function here
+  const fPrime = (x) => eval((derivative(ans,'x'))) ; // Define the derivative of the function here
   const calculateRoot = () => {
     let x0 = initialGuess;
     let iteration = 0;
@@ -36,20 +34,10 @@ function NewtonRaphson() {
       <div>
         <label htmlFor="ans">Ans:</label>
         <input
-          type="number"
+          type="text"
           id="ans"
           value={ans}
-          onChange={(e) => setans(parseFloat(e.target.value))}
-        />
-      </div>
-      <div>
-        <label htmlFor="root">Root:</label>
-        <input
-          type="number"
-          id="root"
-          value={root}
-          min="1"
-          onChange={(e) => setroot(parseFloat(e.target.value))}
+          onChange={(e) => setans(e.target.value)}
         />
       </div>
       <div>
@@ -66,3 +54,4 @@ function NewtonRaphson() {
     </div>
   );
 }
+export default NewtonRaphson;
