@@ -98,23 +98,25 @@ function regression(){
       let array = [];
       for(let k=i;k<M+i;k++){
         if(i==0&&k==0){
-          array.push(m);
+          array.push(numberdata);
         }else{
           array.push(addx(matrix,k));
         }
       }x.push(array);
     }
-    for(let i=0;i<matrix_y.length;i++){
+   
+    for(let i=0;i<M;i++){
       if(i==0){
         y.push(addx(matrix_y,1));
       }else{
         y.push(addxy(matrix,matrix_y,i));
       }
     }
+  
     det = determinant(x); 
     for(let i=0;i<M;i++){
       if(i==0){
-        answer_y += (determinant(setmatrix(x,y,i))/det)
+        answer_y += (determinant(setmatrix(x,y,i))/det);
       }else{
         answer_y += (determinant(setmatrix(x,y,i))/det)*(findx**i);
       }
