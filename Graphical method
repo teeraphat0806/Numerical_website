@@ -1,0 +1,33 @@
+import "mafs/core.css";
+import "mafs/font.css";
+
+import { useState } from "react";
+import { Mafs, Coordinates, Plot, Theme } from "mafs";
+
+export default function Graphical() {
+  const [answer, setAnswer] = useState(1);
+  const [equation, setEquation] = useState("");
+
+  const plot = () => {
+    setEquation(answer);
+  };
+
+  return (
+    <div>
+      <Mafs>
+        <Coordinates.Cartesian />
+        <Plot.OfX y={(x) => eval(equation)} color={Theme.blue} />
+      </Mafs>
+      <div>
+        <label htmlFor="answer">Equation:</label>
+        <input
+          type="text"
+          id="answer"
+          value={answer}
+          onChange={(e) => setAnswer(e.target.value)}
+        />
+      </div>
+      <button onClick={plot}>Plot</button>
+    </div>
+  );
+}
