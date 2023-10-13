@@ -1,0 +1,200 @@
+import React, { useState } from 'react';
+import Select from 'react-select';
+
+function Interpolation() {
+  const [numberdata, setnumberdata] = useState(2);
+  const [numberpoint, setnumberpoint] = useState(2);
+  const [matrixX, setMatrixX] = useState([0,0]);
+  const [matrixY, setMatrixY] = useState([0,0]);
+  const [point, setPoint] = useState([0,0]);
+  const [answer, setAnswer] = useState(0);
+  const [selectedOption, setSelectedOption] = useState("Linear Interpolation");
+  // function
+  const handleDimensionChange_matrix = (e) => {
+    const newDimension = parseInt(e.target.value, 10);
+    const newDimensions = parseInt(e.target.value, 10);
+    setnumberdata(newDimension);
+    setMatrixX(Array.from({ length: newDimension }, () => Array(newDimension).fill(0)));
+    setMatrixY(Array.from({ length: newDimensions }, () => Array(newDimensions).fill(0)));
+  };
+  const handleOptionChange = (e) => {
+    setSelectedOption(e.target.value);
+    if (selectedOption == "Linear Interpolation") {
+      
+      setnumberpoint(2);
+      setpoint();
+    } else if (selectedOption == "Quadratic Interpolation") {
+      setnumberpoint(3);
+      setpoint();
+    } 
+  };
+  const handleOptionChange_x = (e) => {
+    const newDimension = parseInt(e.target.value, 10);
+    setnumberpoint(newDimension);
+    setPoint(Array.from({ length: newDimension }, () => Array(newDimension).fill(0)));
+  };
+  const handleInputChanges_point = (e, index) => {
+    const newValue = parseFloat(e.target.value);
+    if (!isNaN(newValue)) {
+      const newRow = [...point];
+      newRow[index] = newValue;
+      setPoint(newRow);
+    }
+  };
+  const handleInputChanges_matrix_x = (e, index) => {
+    const newValue = parseFloat(e.target.value);
+    if (!isNaN(newValue)) {
+      const newRow = [...matrixX];
+      newRow[index] = newValue;
+      setMatrixX(newRow);
+    }
+  };
+  const handleInputChanges_matrix_y = (e, index) => {
+    const newValue = parseFloat(e.target.value);
+    if (!isNaN(newValue)) {
+      const newRow = [...matrixY];
+      newRow[index] = newValue;
+      setMatrixY(newRow);
+    }
+  };
+  function setMatrixs() {
+    const arr = Array();
+    const ar2 = Array();
+    for (let i = 0; i < numberdata; i++) {
+      arr.push(0);
+      ar2.push(0);
+    }
+    setMatrixX(arr);
+    setMatrixY(ar2);
+  }
+  function setpoint() {
+    const arr = Array();
+    for (let i = 0; i <numberpoint; i++) {
+      arr.push(0);
+    }
+    setPoint(arr);
+  }
+  function select() {
+    if (selectedOption == "Linear Interpolation") {
+      linear_interpolation();
+    } else if (selectedOption == "Quadratic Interpolation") {
+      quadratic_interpolation();
+    } else if (selectedOption == "Polynomial Interpolation") {
+      polynomial_interpolation();
+    }
+  }
+  function linear_interpolation(){
+    let ans = (matrixY[point[1]-1]-matrixY[point[0]-1])/(matrixX[point[1]-1]-matrixX[point[0]-1]);
+    setAnswer(ans);
+  }
+  function quadratic_interpolation(){
+    let matrixy2 = [matrixY[point[0]-1],matrixY[point[1]-1],matrixY[point[2]-1]];
+    let matrixx2 = [matrixX[point[0]-1],matrixX[point[1]-1],matrixX[point[2]-1]];
+    for(let i=0;i<matrixy2.length-1;i++){
+      matrixy2[i] = interpolationed(matrixx2[i],matrixx2[i+1],matrixy2[i],matrixy2[i+1]);
+    }
+    setAnswer(interpolationed(matrixx2[0],matrixx2[matrixx2.length-1],matrixy2[0],matrixy2[1]))
+  }
+  function polynomial_interpolation(){
+    let lens = matrixX.length-1;
+    let matrixy2 = [...matrixY];
+    let round = 0;
+    while(true){
+      for(let i=0;i<lens;i++){
+        matrixy2[i] = interpolationed(matrixX[i],matrixX[i+1+round],matrixy2[i],matrixy2[i+1]);
+        
+      }lens-=1;
+      round+=1;
+      if(lens==0){
+        break;
+      }if(round==numberpoint-1){
+        break;
+      }
+    }setAnswer(matrixy2[0]);
+  }
+  function interpolationed(x1,x2,y1,y2){
+    return (y2-y1)/(x2-x1);
+  }
+  function Linearquadratic_point_ui(){
+    
+      return (
+          <div>
+            {point.map((rows, index) => (
+              <input
+                type="number"
+                min="{numberdata}"
+                value={point[index]}
+                onChange={(e) => handleInputChanges_point(e, index)}
+              />
+            ))}
+            <button onClick={select}>confirm</button>
+          </div>
+        
+      )
+    
+  }
+
+  function Polynomial_point_ui(){
+    if(selectedOption == "Polynomial Interpolation"){
+      return (
+          <div>
+            <input
+                type="number"
+                id="numberpoint"
+                min="2"
+                max={numberdata}
+                value={numberpoint}
+                onChange={handleOptionChange_x}
+            />
+          </div>
+      )
+    }
+  }
+    return (
+      <div>
+        <div>
+          <div>
+            <label htmlFor="a">Number of data:</label>
+            <input type="number" id="numberdata" value={numberdata} min="1" onChange={handleDimensionChange_matrix}/>
+            <div>
+              {matrixX.map((rowsed, indexed) => (
+                <input
+                  type="number"
+                  step="0.01"
+                 
+                  value={matrixX[indexed]}
+                  onChange={(e) => handleInputChanges_matrix_x(e, indexed)}
+                />
+              ))}
+            </div>
+            <div>
+              {matrixY.map((rows, index) => (
+                <input
+                  type="number"
+                  step="0.01"
+                 
+                  value={matrixY[index]}
+                  onChange={(e) => handleInputChanges_matrix_y(e, index)}
+                />
+              ))}
+            </div>
+          </div>
+          <div>
+            <select id="optionSelect" value={selectedOption} onChange={handleOptionChange}>
+              <option value="Linear Interpolation">Linear Interpolation</option>
+              <option value="Quadratic Interpolation">Quadratic Interpolation</option>
+              <option value="Polynomial Interpolation">Polynomial Interpolation</option>
+            </select>
+          </div>
+          <Polynomial_point_ui/>
+          <Linearquadratic_point_ui/>
+          
+      </div>
+        <div>
+          <p>{answer}</p>
+        </div>
+    </div>
+    );
+  
+}
+export default Interpolation;
