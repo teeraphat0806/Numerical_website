@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
-
+import Show_graph from './graph';
+import { pow,sqrt } from 'mathjs';
 function Bisection() {
   const [a, setA] = useState(0);
   const [b, setB] = useState(1);
-  const [ans, setans] = useState(1);
+  const [ans, setans] = useState("pow(7,0.5)-x");
   const [tolerance, setTolerance] = useState(0.0001);
   const [result, setResult] = useState(null);
-
+  const [val, setval] = useState("pow(7,0.5)-x");
+  const [x,setX] = useState(0);
+  const [y,setY] = useState(0);
   const f = (x) => eval(ans); // Define the function here
+
 
   const calculateRoot = () => {
     let a = parseFloat(document.getElementById("a").value);
@@ -41,6 +45,9 @@ function Bisection() {
       iteration++;
     }
 
+    setY(f(c));
+    setX(c);
+    setval(ans);
     setResult(`Root: ${c} (found in ${iteration} iterations)`);
   }
 
@@ -66,7 +73,10 @@ function Bisection() {
       </div>
       <button onClick={calculateRoot}>Calculate Root</button>
       <div>{result}</div>
-    </div>
+
+    <Show_graph func = {val} x = {x} y = {y}/>
+    </div> 
+
   );
 }
 
