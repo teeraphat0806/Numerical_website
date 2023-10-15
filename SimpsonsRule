@@ -1,0 +1,78 @@
+import React, { useState } from 'react';
+import { pow,sqrt } from 'mathjs';
+
+function SimpsonsRule() {
+  const [funcString, setFuncString] = useState('x*x');
+  const [lowerLimit, setLowerLimit] = useState(0);
+  const [upperLimit, setUpperLimit] = useState(1);
+  const [subintervals, setSubintervals] = useState(10);
+  const [result, setResult] = useState(null);
+
+  const evaluateFunction = (func, x) => {
+    /* eslint no-eval: "off" */
+    return eval(func.replace('x', x));
+  };
+
+  const calculateIntegral = () => {
+    let h = (upperLimit - lowerLimit) / subintervals;
+    let sum = evaluateFunction(funcString, lowerLimit) + evaluateFunction(funcString, upperLimit);
+
+    for (let i = 1; i < subintervals; i += 2) {
+      sum += 4 * evaluateFunction(funcString, lowerLimit + i * h);
+    }
+
+    for (let i = 2; i < subintervals - 1; i += 2) {
+      sum += 2 * evaluateFunction(funcString, lowerLimit + i * h);
+    }
+
+    setResult((h / 3) * sum);
+  };
+
+  return (
+    <div>
+      <label>Function f(x): </label>
+      <input
+        value={funcString}
+        onChange={(e) => setFuncString(e.target.value)}
+        placeholder="Example: x*x"
+      />
+
+      <br />
+
+      <label>Lower Limit: </label>
+      <input
+        type="number"
+        value={lowerLimit}
+        onChange={(e) => setLowerLimit(Number(e.target.value))}
+      />
+
+      <br />
+
+      <label>Upper Limit: </label>
+      <input
+        type="number"
+        value={upperLimit}
+        onChange={(e) => setUpperLimit(Number(e.target.value))}
+      />
+
+      <br />
+
+      <label>Subintervals: </label>
+      <input
+        type="number"
+        value={subintervals}
+        onChange={(e) => setSubintervals(Number(e.target.value))}
+      />
+
+      <br />
+
+      <button onClick={calculateIntegral}>Calculate</button>
+
+      <br />
+
+      {result !== null && <div>Result: {result}</div>}
+    </div>
+  );
+}
+
+export default SimpsonsRule;
