@@ -1,0 +1,58 @@
+import React, { useState } from 'react';
+
+function TrapezoidalRule() {
+  const [fx, setFx] = useState(''); // function as string input by user
+  const [a, setA] = useState(0);    // lower limit
+  const [b, setB] = useState(0);    // upper limit
+  const [n, setN] = useState(1);    // number of trapezoids
+  const [result, setResult] = useState(null);
+
+  const evaluate = (func, value) => {
+    return new Function('x', `return ${func};`)(value);
+  }
+
+  const approximateIntegral = () => {
+    const h = (b - a) / n;
+    let sum = 0.5 * (evaluate(fx, a) + evaluate(fx, b));
+
+    for (let i = 1; i < n; i++) {
+      sum += evaluate(fx, a + i * h);
+    }
+
+    const integralValue = h * sum;
+    setResult(integralValue);
+  }
+
+  return (
+    <div>
+      <input 
+        type="text" 
+        placeholder="Enter f(x)" 
+        value={fx} 
+        onChange={(e) => setFx(e.target.value)} 
+      />
+      <input 
+        type="number" 
+        placeholder="Enter lower limit (a)" 
+        value={a} 
+        onChange={(e) => setA(parseFloat(e.target.value))} 
+      />
+      <input 
+        type="number" 
+        placeholder="Enter upper limit (b)" 
+        value={b} 
+        onChange={(e) => setB(parseFloat(e.target.value))} 
+      />
+      <input 
+        type="number" 
+        placeholder="Enter number of trapezoids (n)" 
+        value={n} 
+        onChange={(e) => setN(parseInt(e.target.value, 10))} 
+      />
+      <button onClick={approximateIntegral}>Calculate</button>
+      {result !== null && <p>Result: {result}</p>}
+    </div>
+  );
+}
+
+export default TrapezoidalRule;
