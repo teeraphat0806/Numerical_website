@@ -146,7 +146,6 @@ function LU(){
 
     return (
       <div className='cal'>
-        <Nav></Nav>
         <div>
           <label>
             ขนาดเมทริก (n x n):
