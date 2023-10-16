@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Nav from './Nav';
 
 function Lagrange() {
     const [matrixSize, setMatrixSize] = useState(2)
