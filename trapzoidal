@@ -1,26 +1,40 @@
 import React, { useState } from 'react';
+import { derivative, pow, sqrt } from 'mathjs';
+import Show_graph from '../graph_show';
+// Register the extension with Math.js
+
+
+
+
+// Register the extension with Math.js
+
+
 
 function TrapezoidalRule() {
+ 
   const [fx, setFx] = useState(''); // function as string input by user
+  const [func, setFunc] = useState('');
   const [a, setA] = useState(0);    // lower limit
   const [b, setB] = useState(0);    // upper limit
   const [n, setN] = useState(1);    // number of trapezoids
   const [result, setResult] = useState(null);
-
-  const evaluate = (func, value) => {
-    return new Function('x', `return ${func};`)(value);
-  }
-
+  const [y,setY] = useState(null);
+  const f = (x) => eval(fx);
   const approximateIntegral = () => {
+    let sum = 0;
     const h = (b - a) / n;
-    let sum = 0.5 * (evaluate(fx, a) + evaluate(fx, b));
+
 
     for (let i = 1; i < n; i++) {
-      sum += evaluate(fx, a + i * h);
+      sum += f(a+(h*i));
     }
-
-    const integralValue = h * sum;
+    sum*=2;
+    sum +=  (f(a) + f(b));
+    sum*=(h*0.5);
+    const integralValue = sum;
     setResult(integralValue);
+    setFunc(fx);
+    setY(f(result));
   }
 
   return (
@@ -51,6 +65,8 @@ function TrapezoidalRule() {
       />
       <button onClick={approximateIntegral}>Calculate</button>
       {result !== null && <p>Result: {result}</p>}
+      
+      <Show_graph func={func} x={result} y={y}/>
     </div>
   );
 }
