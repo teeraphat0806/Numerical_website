@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { pow,sqrt } from 'mathjs';
-
+import Show_graph from '../graph_show';
 function SimpsonsRule() {
   const [funcString, setFuncString] = useState('x*x');
+  const [func, setFunc] = useState('x*x');
   const [lowerLimit, setLowerLimit] = useState(0);
   const [upperLimit, setUpperLimit] = useState(1);
   const [subintervals, setSubintervals] = useState(10);
   const [result, setResult] = useState(null);
 
   const evaluateFunction = (func, x) => {
-    /* eslint no-eval: "off" */
     return eval(func.replace('x', x));
   };
 
@@ -26,6 +26,7 @@ function SimpsonsRule() {
     }
 
     setResult((h / 3) * sum);
+    setFunc(funcString);
   };
 
   return (
@@ -71,6 +72,7 @@ function SimpsonsRule() {
       <br />
 
       {result !== null && <div>Result: {result}</div>}
+      <Show_graph func={func} x={result} y={evaluateFunction(func,result)}/>
     </div>
   );
 }
