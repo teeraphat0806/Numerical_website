@@ -8,13 +8,15 @@ function SimpsonsRule() {
   const [upperLimit, setUpperLimit] = useState(1);
   const [subintervals, setSubintervals] = useState(10);
   const [result, setResult] = useState(null);
-
+  const [accept,setAccept] = useState(true);
   const evaluateFunction = (func, x) => {
     return eval(func.replace('x', x));
   };
 
   const calculateIntegral = () => {
-    let h = (upperLimit - lowerLimit) / subintervals;
+    setAccept(true);
+    if(subintervals%2 ==0){
+      let h = (upperLimit - lowerLimit) / subintervals;
     let sum = evaluateFunction(funcString, lowerLimit) + evaluateFunction(funcString, upperLimit);
 
     for (let i = 1; i < subintervals; i += 2) {
@@ -27,6 +29,10 @@ function SimpsonsRule() {
 
     setResult((h / 3) * sum);
     setFunc(funcString);
+  }else{
+    setAccept(false);
+  }
+    
   };
 
   return (
@@ -72,6 +78,7 @@ function SimpsonsRule() {
       <br />
 
       {result !== null && <div>Result: {result}</div>}
+      {accept == false && <div>Please input Subintervals odd number</div>}
       <Show_graph func={func} x={result} y={evaluateFunction(func,result)}/>
     </div>
   );
