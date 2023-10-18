@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
-
+import Show_graph from '../graph_show';
+import { pow,sqrt } from 'mathjs';
 function OnePointIteration() {
   const [initialGuess, setInitialGuess] = useState(0);
   const [tolerance, setTolerance] = useState(0.0001);
-  const [ans, setans] = useState("");
+  const [ans, setans] = useState("1/43-x");
+  const [func, setFunc] = useState("1/43-x");
   const [result, setResult] = useState(null);
-
-  const g = (x) => eval(ans); // Define the function here
+  const [xe,setXe] = useState(0);
+  const g = (x) => eval(func); // Define the function here
 
   
   const calculateRoot = () => {
+    setFunc(ans);
     let x0 = initialGuess;
     let x1 = g(x0);
     let iteration = 0;
@@ -29,6 +32,7 @@ function OnePointIteration() {
       setResult(`It max iteration`);
     }else{
       setResult(`Root: ${x1} (found in ${iteration} iterations)`);
+      setXe(x1);
     }
   }
 
@@ -64,6 +68,7 @@ function OnePointIteration() {
       </div>
       <button onClick={calculateRoot}>Calculate Root</button>
       <div>{result}</div>
+      <Show_graph func={func} x={xe} y={g(xe)}/>
     </div>
   );
 }
