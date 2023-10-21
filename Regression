@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import Select from 'react-select';
+import Show_graph from './graph';
+import { string } from 'mathjs';
 
-
-function regression() {
-  const [numberdata, setnumberdata] = useState(1);
+function Regression() {
+  const [numberdata, setnumberdata] = useState(2);
   const [matrix, setMatrix] = useState([]);
   const [matrix_y, setMatrix_y] = useState([]);
   const [selectedOption, setSelectedOption] = useState(" ");
@@ -12,6 +13,7 @@ function regression() {
   const [m, setm] = useState(0);
   const [x, setx] = useState(0);
   const [matrix_x, setMatrix_x] = useState(Array.from({ length: m }, () => Array(numberdata).fill(0)));
+  const [func,setfunc] = useState("");
   const handleOptionChange = (e) => {
     setSelectedOption(e.target.value);
   };
@@ -110,7 +112,17 @@ function regression() {
     ans.push(((y[0] * x[1][1]) - (y[1] * x[0][1])) / det)
     ans.push(((y[1] * x[0][0]) - (y[0] * x[1][0])) / det)
     setAnswer(ans[0] + (ans[1] * findx));
-  }
+    let str = "";str = str.concat(str,ans[0],"+",ans[1],"*x");
+    setfunc(str);
+    console.log(str);
+}
+
+function multi_s(i){let str="";
+for(let j=0;j<i;j++)
+{if(j!= i-1){str = str.concat(str,"x*")}
+else{str = str.concat(str,"x");}} return str;};
+
+
   function polynomial_regression() {
     let x = Array();
     let y = Array();
@@ -138,14 +150,26 @@ function regression() {
     }
 
     det = determinant(x);
+    let str = "";
     for (let i = 0; i < M; i++) {
       if (i == 0) {
         answer_y += (determinant(setmatrix(x, y, i)) / det);
+        str = str.concat(str,determinant(setmatrix(x, y, i)) / det);
       } else {
         answer_y += (determinant(setmatrix(x, y, i)) / det) * (findx ** i);
+          if(i == M-1){
+            str = str.concat(str,determinant(setmatrix(x, y, i)) / det,"*", multi_s(i));
+          }
+          else{
+            str = str.concat(str,determinant(setmatrix(x, y, i)) / det,"*", multi_s(i),"+");
+          }
+
       }
     }
     setAnswer(answer_y);
+    setfunc(str);
+    console.log(str);
+    
   }
 
   function multi_linear_regression() {
@@ -179,16 +203,25 @@ function regression() {
     console.log("y: " + y);
     det = determinant(xs);
     console.log("det: " + det);
+    let str = "";
     for (let i = 0; i < xs.length; i++) {
       if (i == 0) {
         answer_y += (determinant(setmatrix(xs, y, i)) / det);
+        str = str.concat(str,determinant(setmatrix(xs, y, i)) / det,"+");
       } else {
         answer_y += (determinant(setmatrix(xs, y, i)) / det) * (findx);
+          if(i == xs.length-1){
+            str = str.concat(str,determinant(setmatrix(xs, y, i)) / det,"*x");
+          }
+          else{
+            str = str.concat(str,determinant(setmatrix(xs, y, i)) / det,"*x+");
+          }
       }
     }
 
     setAnswer(answer_y);
-
+    setfunc(str);
+    console.log(str);
   }
   function setmatrix(x, y, index) {
     let ans = Array();
@@ -283,6 +316,7 @@ function regression() {
               </tr>
             </tbody>
           </table>
+          
         </div>)
     }
   }
@@ -333,7 +367,7 @@ function regression() {
     <>
       <div>
         <label htmlFor="a">number of data:</label>
-        <input type="number" id="numberdata" value={numberdata} onChange={(e) => setnumberdata(parseFloat(e.target.value))} />
+        <input type="number"min="2" id="numberdata" value={numberdata} onChange={(e) => setnumberdata(parseFloat(e.target.value))} />
         <button onClick={setMatrixs}>ok</button>
       </div>
       <label htmlFor="a">find x:</label>
@@ -362,8 +396,9 @@ function regression() {
       <div>
 
         <p>{answer}</p>
+        <Show_graph func = {func} x = {findx} y = {answer}/>
       </div>
     </>
   )
 }
-export default regression;
+export default Regression;
